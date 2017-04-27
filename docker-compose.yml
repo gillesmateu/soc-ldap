@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  openldap:
+    image: osixia/openldap
+    container_name: openldap
+    tty: true
+    stdin_open: true
+    labels:
+     - "traefik.enable=false"
+    env_file:
+     - openldap.env
+    volumes:
+     - ./data/slapd/config:/etc/ldap/slapd.d
+     - ./data/slapd/database:/var/lib/ldap
+    networks:
+      default:
+
+  ldapadmin:
+    image: osixia/phpldapadmin
+    env_file:
+     - ldapadmin.env
+    depends_on:
+     - openldap
+    labels:
+      - "traefik.backend=ldapadmin"
+      - "traefik.frontend.rule=Host:ldapadmin.soc.imerir"
+      - "traefik.port=80"
+      - "traefik.docker.network=traefik_default"
+    networks:
+      default:
+      proxy:
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.255.1.16/28
+  proxy:
+    external:
+      name: traefik_default
