@@ -10,8 +10,11 @@ faire un docker-compose up -d pour lancer les conteneurs
 changement (moche) des droits dans l'annuaire:
 
 docker exec -ti openldap /bin/bash
+
 apt update
+
 apt install -y ldapvi nano ldap-utils
+
 ldapvi -h ldapi:/// -Y EXTERNAL -b cn=config
 
 dans la partie
